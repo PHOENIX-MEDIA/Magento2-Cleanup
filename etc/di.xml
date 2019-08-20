@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Phoenix\Cleanup\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Phoenix\Cleanup\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">cleanupLogger</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Phoenix\Cleanup\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Phoenix\Cleanup\Model\Handler\Resolver">
+        <arguments>
+            <argument name="handlerPool" xsi:type="array">
+                <item name="logFiles" xsi:type="string">Phoenix\Cleanup\Model\Handler\FilesLogs</item>
+                <item name="reportFiles" xsi:type="string">Phoenix\Cleanup\Model\Handler\FilesReports</item>
+                <item name="optionalFolder" xsi:type="string">Phoenix\Cleanup\Model\Handler\FilesFolders</item>
+                <!--item name="media" xsi:type="string">Phoenix\Cleanup\Model\Handler\Media</item-->
+                <!--item name="customerQuotes" xsi:type="string">Phoenix\Cleanup\Model\Handler\QuotesCustomer</item-->
+                <!--item name="guestQuotes" xsi:type="string">Phoenix\Cleanup\Model\Handler\QuotesGuest</item-->
+                <item name="adminNotification" xsi:type="string">Phoenix\Cleanup\Model\Handler\AdminNotifications</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="phoenixCleanupRun" xsi:type="object">Phoenix\Cleanup\Console\Command\CleanupCommand</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

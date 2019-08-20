@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="phoenix_cleanup" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Cleanup</label>
+            <tab>phoenix_media</tab>
+            <resource>Phoenix_Cleanup::config</resource>
+            <group id="general" type="text" sortOrder="10" translate="label" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General</label>
+                <field id="is_enabled" type="select" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="dry_run" type="select" sortOrder="20" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Dry Run</label>
+                    <comment>Set to "No" if you really want to delete files and folders!</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="is_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="cron_expr" translate="label comment" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Schedule</label>
+                    <comment>When should the process be scheduled (use cron syntax)?</comment>
+                    <depends>
+                        <field id="is_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="database_ping_time" translate="label comment" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Database Ping Frequency</label>
+                    <comment>The number of seconds between database ping's, to avoid database timeouts during long operations?</comment>
+                    <depends>
+                        <field id="is_enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="files" type="text" sortOrder="20" translate="label" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Files</label>
+                <depends>
+                    <field id="phoenix_cleanup/general/is_enabled">1</field>
+                </depends>
+                <field id="cleanup_logfiles" type="select" translate="label comment" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cleanup Logs</label>
+                    <comment>Cleanup files in var/log</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="keep_logfile_days" translate="label comment" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Logs Archive Days</label>
+                    <comment>Number of days to keep log-files in archive</comment>
+                    <depends>
+                        <field id="cleanup_logfiles">1</field>
+                    </depends>
+                </field>
+                <field id="cleanup_all_files" type="select" translate="label comment" sortOrder="70" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cleanup All Files</label>
+                    <comment>Uses file mask * instead of *.log</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="cleanup_logfiles">1</field>
+                    </depends>
+                </field>
+                <field id="cleanup_reports" type="select" translate="label comment" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cleanup Exception Reports</label>
+                    <comment>Cleanup files in var/report</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="keep_reports_days" translate="label comment" sortOrder="90" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Reports Archive Days</label>
+                    <comment>Number of days to keep report-files in archive</comment>
+                    <depends>
+                        <field id="cleanup_reports">1</field>
+                    </depends>
+                </field>
+                <field id="cleanup_optional_folders_enabled" type="select" translate="label comment" sortOrder="190" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cleanup Optional Folders</label>
+                    <comment>Cleanup any folder in your Magento installation. WARNING: do not use on source folders, as this could damage your magento installation. Handle with care.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cleanup_optional_folders" translate="label comment" sortOrder="200" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Optional Folders</label>
+                    <comment>Add additional folders to the cleanup process. Path is relative within magento base directory</comment>
+                    <frontend_model>Phoenix\Cleanup\Block\Adminhtml\System\Config\Fieldset\Folders</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <depends>
+                        <field id="cleanup_optional_folders_enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="media" type="text" sortOrder="30" translate="label" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Media</label>
+                <depends>
+                    <field id="phoenix_cleanup/general/is_enabled">1</field>
+                </depends>
+                <field id="cleanup_media" type="select" translate="label comment" sortOrder="100" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cleanup Media Folder</label>
+                    <comment>Cleanup unassigned media files in /media/catalog/product</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="keep_days" translate="label comment" sortOrder="110" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Media Archive Days</label>
+                    <comment>Number of days to keep media-files in media recycle bin</comment>
+                    <depends>
+                        <field id="cleanup_media">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="quotes" type="text" sortOrder="40" translate="label" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Quotes</label>
+                <depends>
+                    <field id="phoenix_cleanup/general/is_enabled">1</field>
+                </depends>
+                <field id="cleanup_sales_quote_customers" type="select" sortOrder="120" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cleanup Customer Cart Quotes</label>
+                    <comment>Cleanup unused quotes for registered users.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="keep_cart_quotes_customers_days" translate="label comment" sortOrder="130" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Keep Quotes Days (Customers)</label>
+                    <comment>Number of days to keep customer quotes in sales_flat_quotes table</comment>
+                    <depends>
+                        <field id="cleanup_sales_quote_customers">1</field>
+                    </depends>
+                </field>
+                <field id="cleanup_sales_quote_guests" type="select" translate="label comment" sortOrder="140" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cleanup Guest Cart Quotes</label>
+                    <comment>Cleanup unused quotes for guest users.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="keep_cart_quotes_guests_days" translate="label comment" sortOrder="150" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Keep Quotes Days (Anonymous)</label>
+                    <comment>Number of days to keep anonymous quotes in sales_flat_quotes table.</comment>
+                    <depends>
+                        <field id="cleanup_sales_quote_guests">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="adminnotifications" type="text" sortOrder="50" translate="label" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Admin Notifications</label>
+                <depends>
+                    <field id="phoenix_cleanup/general/is_enabled">1</field>
+                </depends>
+                <field id="is_enabled" type="select" sortOrder="160" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cleanup Admin Notifications</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="keep_days" translate="label comment" sortOrder="170" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Keep Notifications Days</label>
+                    <comment>0 = delete immediately</comment>
+                    <depends>
+                        <field id="is_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="delete_notifications" type="select" translate="label comment" sortOrder="180" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Delete Notifications</label>
+                    <comment>If set to No, the notifications will just be marked as read</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="is_enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

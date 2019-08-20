@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <phoenix_cleanup>
+            <general>
+                <enabled>0</enabled>
+                <dry_run>0</dry_run>
+                <cron_expr>0 2 * * *</cron_expr>
+                <database_ping_time>15</database_ping_time>
+            </general>
+            <files>
+                <cleanup_logfiles>0</cleanup_logfiles>
+                <keep_logfile_days>30</keep_logfile_days>
+                <cleanup_all_files>0</cleanup_all_files>
+                <cleanup_reports>0</cleanup_reports>
+                <keep_reports_days>30</keep_reports_days>
+                <cleanup_optional_folders_enabled>0</cleanup_optional_folders_enabled>
+            </files>
+            <media>
+                <cleanup_media>0</cleanup_media>
+                <keep_days>14</keep_days>
+            </media>
+            <quotes>
+                <cleanup_sales_quote_customers>0</cleanup_sales_quote_customers>
+                <keep_cart_quotes_customers_days>30</keep_cart_quotes_customers_days>
+                <cleanup_sales_quote_guests>0</cleanup_sales_quote_guests>
+                <keep_cart_quotes_guests_days>14</keep_cart_quotes_guests_days>
+            </quotes>
+            <adminnotifications>
+                <is_enabled>0</is_enabled>
+                <keep_days>7</keep_days>
+                <delete_notifications>0</delete_notifications>
+            </adminnotifications>
+        </phoenix_cleanup>
+    </default>
+</config>
