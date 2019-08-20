@@ -18,7 +18,7 @@ handlers can be easily extended by own handlers via di.xml.
 
 1. Install the module via Composer:
 ``` 
-composer require phoenix-media/cleanup
+composer require phoenix-media/magento2-cleanup
 ```
 2. Enable it
 ``` bin/magento module:enable Phoenix_Cleanup ```
