@@ -1,12 +1,15 @@
 <?php
 /**
- * Phoenix_Cleanup for Magento 2
+ * PHOENIX MEDIA - Cleanup
  *
+ * NOTICE OF LICENSE
  *
- * @category    Phoenix
- * @package     Phoenix_Cleanup
- * @license     http://opensource.org/licenses/MIT MIT
- * @copyright   Copyright (c) 2019 PHOENIX MEDIA GmbH (http://www.phoenix-media.eu)
+ * This source file is subject to license that is bundled with
+ * this package in the file LICENSE.
+ *
+ * @category   Phoenix
+ * @package	   Phoenix_Cleanup
+ * @copyright  Copyright (c) 2013-2019 PHOENIX MEDIA GmbH (http://www.phoenix-media.eu)
  */
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,

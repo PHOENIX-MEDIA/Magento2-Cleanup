@@ -1,4 +1,16 @@
 <?php
+/**
+ * PHOENIX MEDIA - Cleanup
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to license that is bundled with
+ * this package in the file LICENSE.
+ *
+ * @category   Phoenix
+ * @package	   Phoenix_Cleanup
+ * @copyright  Copyright (c) 2013-2019 PHOENIX MEDIA GmbH (http://www.phoenix-media.eu)
+ */
 namespace Phoenix\Cleanup\Model\Handler;
 
 use Magento\Framework\ObjectManagerInterface;
@@ -32,17 +44,6 @@ class Resolver
     ) {
         $this->objectManager = $objectManager;
         $this->handlerPool = $handlerPool;
-
-        // @todo $handlerPool is not correctly set by di.xml. fix issue.
-        if (count($this->handlerPool) == 0) {
-            $this->handlerPool['logFiles'] = 'Phoenix\Cleanup\Model\Handler\FilesLogs';
-            $this->handlerPool['reportFiles'] = 'Phoenix\Cleanup\Model\Handler\FilesReports';
-            $this->handlerPool['optionalFolders'] = 'Phoenix\Cleanup\Model\Handler\FilesFolders';
-            //$this->handlerPool['media'] = 'Phoenix\Cleanup\Model\Handler\Media';
-            //$this->handlerPool['customerQuotes'] = 'Phoenix\Cleanup\Model\Handler\QuotesCustomer';
-            //$this->handlerPool['guestQuotes'] = 'Phoenix\Cleanup\Model\Handler\QuotesGuest';
-            $this->handlerPool['adminNotification'] = 'Phoenix\Cleanup\Model\Handler\AdminNotifications';
-        }
 	}
 
     /**

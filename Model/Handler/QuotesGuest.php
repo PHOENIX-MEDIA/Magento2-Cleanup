@@ -1,8 +1,19 @@
 <?php
-
+/**
+ * PHOENIX MEDIA - Cleanup
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to license that is bundled with
+ * this package in the file LICENSE.
+ *
+ * @category   Phoenix
+ * @package	   Phoenix_Cleanup
+ * @copyright  Copyright (c) 2013-2019 PHOENIX MEDIA GmbH (http://www.phoenix-media.eu)
+ */
 namespace Phoenix\Cleanup\Model\Handler;
 
-use Magento\Framework\App\ResourceConnection;
+use Magento\Quote\Model\ResourceModel\Quote\CollectionFactory;
 use Phoenix\Cleanup\Api\HandlerInterface;
 use Phoenix\Cleanup\Logger\Logger;
 use Phoenix\Cleanup\Model\Config;
@@ -10,20 +21,20 @@ use Phoenix\Cleanup\Model\Config;
 class QuotesGuest extends AbstractHandler implements HandlerInterface
 {
     /**
-     * @var ResourceConnection
+     * @var CollectionFactory
      */
-    protected $resourceConnection;
+    protected $quoteCollectionFactory;
 
     /**
      * Quotes constructor.
      * @param Config $config
      * @param Logger $logger
-     * @param ResourceConnection $resourceConnection
+     * @param CollectionFactory $collectionFactory
      */
-    public function __construct(Config $config, Logger $logger, ResourceConnection $resourceConnection)
+    public function __construct(Config $config, Logger $logger, CollectionFactory $collectionFactory)
     {
         parent::__construct($config, $logger);
-        $this->resourceConnection = $resourceConnection;
+        $this->quoteCollectionFactory = $collectionFactory;
     }
 
     /**
@@ -45,41 +56,19 @@ class QuotesGuest extends AbstractHandler implements HandlerInterface
     {
         $keepCartQuotesDays = $this->config->getKeepCartQuotesGuestDays();
         $this->log('days to keep quotes for anonymous users in database: ' .$keepCartQuotesDays);
+        $lifetime = $keepCartQuotesDays * 86400;
 
-        /* @var $resource Mage_Core_Model_Resource */
-        $resource = $this->resourceConnection;
-        $connection = $resource->getConnection('core_write');
-        $tblSalesFlatQuotes = $this->resourceConnection->getTableName('sales/quote');
-        $query = "
-                SELECT COUNT(entity_id) as cnt
-                    FROM " . $tblSalesFlatQuotes . "
-                    WHERE updated_at < (CURRENT_DATE - INTERVAL " . $keepCartQuotesDays . " DAY)
-                        AND (
-                            customer_id = 0
-                            OR customer_id IS NULL
-                        )
-            ";
+        /** @var $quotes \Magento\Quote\Model\ResourceModel\Quote\Collection */
+        $quotes = $this->quoteCollectionFactory->create();
 
-        $recordCount = $connection->fetchOne($query);
-        $this->log($recordCount . ' records detected');
+        $quotes->addFieldToFilter('updated_at', ['to' => date('Y-m-d', time() - $lifetime)]);
+        $quotes->addFieldToFilter(['customer_id', 'customer_id'], [['eq' => 0, 'null' => true]]);
 
-        if ($this->dryRun == false) {
-            $query = "
-                DELETE
-                    FROM " . $tblSalesFlatQuotes . "
-                    WHERE updated_at < (CURRENT_DATE - INTERVAL " . $keepCartQuotesDays . " DAY)
-                        AND (
-                            customer_id = 0
-                            OR customer_id IS NULL
-                        )
-            ";
-
-            $connection->query($query);
+        if ($this->config->isDryRun() === false) {
+            $recordCount = $quotes->count();
+            $quotes->walk('delete');
             $this->log($recordCount . ' records deleted');
         }
-
-        unset($connection);
-        unset($resource);
 
         return $this;
     }

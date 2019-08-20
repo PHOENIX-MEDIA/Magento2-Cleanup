@@ -20,8 +20,8 @@
                 <item name="reportFiles" xsi:type="string">Phoenix\Cleanup\Model\Handler\FilesReports</item>
                 <item name="optionalFolder" xsi:type="string">Phoenix\Cleanup\Model\Handler\FilesFolders</item>
                 <!--item name="media" xsi:type="string">Phoenix\Cleanup\Model\Handler\Media</item-->
-                <!--item name="customerQuotes" xsi:type="string">Phoenix\Cleanup\Model\Handler\QuotesCustomer</item-->
-                <!--item name="guestQuotes" xsi:type="string">Phoenix\Cleanup\Model\Handler\QuotesGuest</item-->
+                <item name="customerQuotes" xsi:type="string">Phoenix\Cleanup\Model\Handler\QuotesCustomer</item>
+                <item name="guestQuotes" xsi:type="string">Phoenix\Cleanup\Model\Handler\QuotesGuest</item>
                 <item name="adminNotification" xsi:type="string">Phoenix\Cleanup\Model\Handler\AdminNotifications</item>
             </argument>
         </arguments>
