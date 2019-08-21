@@ -3,7 +3,6 @@ namespace Phoenix\Cleanup\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
-use Phoenix\EsbBase\Model\Serialized;
 
 class Config
 {
@@ -27,8 +26,8 @@ class Config
         ScopeConfigInterface $scopeConfig,
         Serialized $serialized
     ) {
-        $this->scopeConfig = $scopeConfig;
-        $this->serialized = $serialized;
+        $this->scopeConfig  = $scopeConfig;
+        $this->serialized   = $serialized;
     }
 
     /**
@@ -162,6 +161,7 @@ class Config
         if (!is_array($folders)) {
             $folders = [];
         }
+
         return $folders;
     }
 
@@ -243,7 +243,6 @@ class Config
         ));
     }
 
-
     /**
      * Return if admin notifications should get cleaned up
      *
@@ -257,7 +256,6 @@ class Config
         );
     }
 
-
     /**
      * Return retention days for admin notifications
      *
@@ -270,7 +268,6 @@ class Config
             ScopeInterface::SCOPE_STORE
         ));
     }
-
 
     /**
      * Return delete admin notfications
