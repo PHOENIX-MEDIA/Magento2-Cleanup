@@ -2,7 +2,8 @@
 namespace Phoenix\Cleanup\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Serialize\Serializer\Json as SerializerJson;
+use Magento\Framework\Serialize\Serializer\
+    as Serializer;
 use Magento\Store\Model\ScopeInterface;
 
 class Config
@@ -13,22 +14,22 @@ class Config
     protected $scopeConfig;
 
     /**
-     * @var SerializerJson
+     * @var Serializer
      */
-    protected $serializerJson;
+    protected $serializer;
 
     /**
      * Constructor
      *
      * @param ScopeConfigInterface $scopeConfig
-     * @param SerializerJson $serializerJson
+     * @param Serializer $serializer
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        SerializerJson $serializerJson
+        Serializer $serializer
     ) {
-        $this->scopeConfig      = $scopeConfig;
-        $this->serializerJson   = $serializerJson;
+        $this->scopeConfig = $scopeConfig;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -155,7 +156,7 @@ class Config
      */
     public function getCleanupOptionalFolders()
     {
-        $folders = $this->serializerJson->unserialize($this->scopeConfig->getValue(
+        $folders = $this->serializer->unserialize($this->scopeConfig->getValue(
             'phoenix_cleanup/files/cleanup_optional_folders',
             ScopeInterface::SCOPE_STORE
         ));
