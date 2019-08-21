@@ -2,8 +2,7 @@
 namespace Phoenix\Cleanup\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Serialize\Serializer\
-    as Serializer;
+use Magento\Framework\Serialize\Serializer as Serializer;
 use Magento\Store\Model\ScopeInterface;
 
 class Config
