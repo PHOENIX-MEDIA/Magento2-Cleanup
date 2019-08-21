@@ -2,8 +2,8 @@
 namespace Phoenix\Cleanup\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Serialize\Serializer as Serializer;
 use Magento\Store\Model\ScopeInterface;
-use Phoenix\EsbBase\Model\Serialized;
 
 class Config
 {
@@ -13,22 +13,22 @@ class Config
     protected $scopeConfig;
 
     /**
-     * @var Serialized
+     * @var Serializer
      */
-    protected $serialized;
+    protected $serializer;
 
     /**
      * Constructor
      *
      * @param ScopeConfigInterface $scopeConfig
-     * @param Serialized $serialized
+     * @param Serializer $serializer
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        Serialized $serialized
+        Serializer $serializer
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->serialized = $serialized;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -155,13 +155,14 @@ class Config
      */
     public function getCleanupOptionalFolders()
     {
-        $folders = $this->serialized->unserialize($this->scopeConfig->getValue(
+        $folders = $this->serializer->unserialize($this->scopeConfig->getValue(
             'phoenix_cleanup/files/cleanup_optional_folders',
             ScopeInterface::SCOPE_STORE
         ));
         if (!is_array($folders)) {
             $folders = [];
         }
+
         return $folders;
     }
 
@@ -243,7 +244,6 @@ class Config
         ));
     }
 
-
     /**
      * Return if admin notifications should get cleaned up
      *
@@ -257,7 +257,6 @@ class Config
         );
     }
 
-
     /**
      * Return retention days for admin notifications
      *
@@ -270,7 +269,6 @@ class Config
             ScopeInterface::SCOPE_STORE
         ));
     }
-
 
     /**
      * Return delete admin notfications
