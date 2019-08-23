@@ -79,7 +79,7 @@ class CleanupCommand extends Command
                 $handler->cleanup();
             }
         } else {
-            $res = $this->cron->cleanup();
+            $res = $this->cron->execute();
             $output->writeln($res);
         }
 
