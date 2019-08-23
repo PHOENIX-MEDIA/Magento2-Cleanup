@@ -61,7 +61,7 @@ class Cron
     /**
      * start the cleanup process
      */
-    public function cleanup()
+    public function execute()
     {
         if ($this->flag->isRunning()) {
             $msg = 'Skipping process. Another process is still running.';

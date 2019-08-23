@@ -1,13 +1,8 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
     <group id="default">
-        <job name="phoenix_cleanup_magento">
-            <schedule>
-                <config_path>phoenix_cleanup/settings/cron_expr</config_path>
-            </schedule>
-            <run>
-                <model>phoenix_cleanup/cron::cleanup</model>
-            </run>
+        <job name="phoenix_cleanup_magento" instance="Phoenix\Cleanup\Model\Cron" method="execute">
+            <config_path>phoenix_cleanup/general/cron_expr</config_path>
         </job>
     </group>
 </config>
