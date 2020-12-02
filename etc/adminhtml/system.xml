@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
+        <tab id="phoenix_media" translate="label" sortOrder="300">
+            <label>PHOENIX MEDIA</label>
+        </tab>
         <section id="phoenix_cleanup" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="0" showInStore="0">
             <label>Cleanup</label>
             <tab>phoenix_media</tab>
