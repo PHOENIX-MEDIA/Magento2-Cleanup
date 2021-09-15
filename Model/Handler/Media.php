@@ -139,7 +139,7 @@ class Media extends AbstractFiles implements HandlerInterface
         //output the savings in bytes
         $bytesFormatted = $this->helper->getBytesFormatted($this->sizeCount, 2);
         $this->logger->info(
-            'saved: ' . number_format($this->sizeCount, 0, ',', '.') . ' Bytes (' . $bytesFormatted . ')'
+            'moved to recycle bin: ' . number_format($this->sizeCount, 0, ',', '.') . ' Bytes (' . $bytesFormatted . ')'
         );
 
         return $this;
@@ -339,6 +339,7 @@ class Media extends AbstractFiles implements HandlerInterface
                         copy($file, $newFilePath);
 
                         //delete the original file
+                        $this->calculateSavings($file);
                         $this->log('deleting: ' . $file);
                         unlink($file);
                     } catch (Exception $e) {
