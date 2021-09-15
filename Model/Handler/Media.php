@@ -181,7 +181,7 @@ class Media extends AbstractFiles implements HandlerInterface
         $currentPath    = $path;
 
         for ($level = $depth; $level >= 0; $level --) {
-            if (empty($pathParts[$level]) == false) {
+            if (isset($pathParts[$level]) && $pathParts[$level] != '') {
                 if (empty($this->directoryHashMap[$level][$currentPath]) == true) {
                     $this->directoryHashMap[$level][$currentPath] = $fileCount;
                 } else {
