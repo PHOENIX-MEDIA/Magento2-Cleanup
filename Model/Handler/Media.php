@@ -200,8 +200,8 @@ class Media extends AbstractFiles implements HandlerInterface
         //do recursive call
         if (empty($directories) == false) {
             foreach ($directories as $directory) {
-                //ignore cache and placeholder
-                if ($directory != $this->cachePath && $directory != $this->placeholderPath && $directory != $this->watermarkPath) {
+                //ignore placeholder and watermark
+                if ($directory != $this->placeholderPath && $directory != $this->watermarkPath) {
                     $this->detectEmptyFolders($directory);
                 }
             }
@@ -216,7 +216,7 @@ class Media extends AbstractFiles implements HandlerInterface
         $this->detectEmptyFolders($this->magentoMediaPath);
 
         //delete the empty folders
-        $depth = count($this->directoryHashMap);
+        $depth = !empty($this->directoryHashMap) ? max(array_keys($this->directoryHashMap)) : 0;
         for ($level = $depth; $level >= 0; $level --) {
             if (empty($this->directoryHashMap[$level]) == false) {
                 foreach ($this->directoryHashMap[$level] as $directory => $fileCount) {
