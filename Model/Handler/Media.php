@@ -14,7 +14,14 @@
 namespace Phoenix\Cleanup\Model\Handler;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Archive;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Io\File;
 use Phoenix\Cleanup\Api\HandlerInterface;
+use Phoenix\Cleanup\Helper\Data as Helper;
+use Phoenix\Cleanup\Logger\Logger;
+use Phoenix\Cleanup\Model\Config;
 
 class Media extends AbstractFiles implements HandlerInterface
 {
@@ -74,6 +81,25 @@ class Media extends AbstractFiles implements HandlerInterface
      */
     protected $directoryHashMap = [];
 
+    /**
+     * @var ResourceConnection
+     */
+    private $resourceConnection;
+
+    public function __construct(
+        ResourceConnection $resourceConnection,
+        Config $config,
+        Logger $logger,
+        Helper $helper,
+        Filesystem $filesystem,
+        DirectoryList $directoryList,
+        Archive $archive,
+        File $io
+    ) {
+        parent::__construct($config, $logger, $helper, $filesystem, $directoryList, $archive, $io);
+
+        $this->resourceConnection = $resourceConnection;
+    }
 
     /**
      * Returns is configuration allowed execution
@@ -216,7 +242,7 @@ class Media extends AbstractFiles implements HandlerInterface
     {
         $this->log('checking database');
 
-        /* @var $resource Mage_Core_Model_Resource */
+        /* @var ResourceConnection $resource */
         $resource   = $this->resourceConnection;
         $connection = $resource->getConnection('core_read');
 
