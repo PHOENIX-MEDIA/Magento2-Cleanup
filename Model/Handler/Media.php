@@ -251,7 +251,7 @@ class Media extends AbstractFiles implements HandlerInterface
 
         foreach ($this->fileList as $file) {
             $query  = "SELECT value FROM " . $tblCatalogProductEntityMediaGallery . " WHERE value = '"
-                . str_replace($this->magentoMediaPath, '', $file) . "' LIMIT 1";
+                . $this->sanitizeFilePathForDbLookup($file) . "' LIMIT 1";
 
             $result = $connection->fetchOne($query);
 
@@ -285,14 +285,11 @@ class Media extends AbstractFiles implements HandlerInterface
 
         if (empty($directories) == false) {
             foreach ($directories as $directory) {
-                //ignore cache and placeholder
-                if ($directory != $this->cachePath && $directory != $this->placeholderPath && $directory != $this->watermarkPath) {
+                //ignore placeholder and watermark
+                if ($directory != $this->placeholderPath && $directory != $this->watermarkPath) {
                     $this->getFilesRecursive($directory);
                 } else {
                     switch ($directory) {
-                        case $this->cachePath:
-                            $this->log('skipping cache path');
-                            break;
                         case $this->placeholderPath:
                             $this->log('skipping placeholder path');
                             break;
@@ -354,5 +351,25 @@ class Media extends AbstractFiles implements HandlerInterface
         }
 
         $this->log('deleted ' . $deleteCounter . ' obsolete media files');
+    }
+
+    /**
+     * @param $file
+     * @return array|string|string[]
+     */
+    protected function sanitizeFilePathForDbLookup($file)
+    {
+        $file = str_replace($this->magentoMediaPath, '', $file);
+
+        if (substr($file, 0, 6) === '/cache') {
+            $fileParts = explode('/', $file);
+            array_shift($fileParts);
+            array_shift($fileParts);
+            array_shift($fileParts);
+
+            $file = '/' . implode('/', $fileParts);
+        }
+
+        return $file;
     }
 }
