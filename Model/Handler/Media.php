@@ -14,7 +14,14 @@
 namespace Phoenix\Cleanup\Model\Handler;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Archive;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Io\File;
 use Phoenix\Cleanup\Api\HandlerInterface;
+use Phoenix\Cleanup\Helper\Data as Helper;
+use Phoenix\Cleanup\Logger\Logger;
+use Phoenix\Cleanup\Model\Config;
 
 class Media extends AbstractFiles implements HandlerInterface
 {
@@ -74,6 +81,25 @@ class Media extends AbstractFiles implements HandlerInterface
      */
     protected $directoryHashMap = [];
 
+    /**
+     * @var ResourceConnection
+     */
+    private $resourceConnection;
+
+    public function __construct(
+        ResourceConnection $resourceConnection,
+        Config $config,
+        Logger $logger,
+        Helper $helper,
+        Filesystem $filesystem,
+        DirectoryList $directoryList,
+        Archive $archive,
+        File $io
+    ) {
+        parent::__construct($config, $logger, $helper, $filesystem, $directoryList, $archive, $io);
+
+        $this->resourceConnection = $resourceConnection;
+    }
 
     /**
      * Returns is configuration allowed execution
@@ -113,7 +139,7 @@ class Media extends AbstractFiles implements HandlerInterface
         //output the savings in bytes
         $bytesFormatted = $this->helper->getBytesFormatted($this->sizeCount, 2);
         $this->logger->info(
-            'saved: ' . number_format($this->sizeCount, 0, ',', '.') . ' Bytes (' . $bytesFormatted . ')'
+            'moved to recycle bin: ' . number_format($this->sizeCount, 0, ',', '.') . ' Bytes (' . $bytesFormatted . ')'
         );
 
         return $this;
@@ -155,7 +181,7 @@ class Media extends AbstractFiles implements HandlerInterface
         $currentPath    = $path;
 
         for ($level = $depth; $level >= 0; $level --) {
-            if (empty($pathParts[$level]) == false) {
+            if (isset($pathParts[$level]) && $pathParts[$level] != '') {
                 if (empty($this->directoryHashMap[$level][$currentPath]) == true) {
                     $this->directoryHashMap[$level][$currentPath] = $fileCount;
                 } else {
@@ -174,8 +200,8 @@ class Media extends AbstractFiles implements HandlerInterface
         //do recursive call
         if (empty($directories) == false) {
             foreach ($directories as $directory) {
-                //ignore cache and placeholder
-                if ($directory != $this->cachePath && $directory != $this->placeholderPath && $directory != $this->watermarkPath) {
+                //ignore placeholder and watermark
+                if ($directory != $this->placeholderPath && $directory != $this->watermarkPath) {
                     $this->detectEmptyFolders($directory);
                 }
             }
@@ -190,7 +216,7 @@ class Media extends AbstractFiles implements HandlerInterface
         $this->detectEmptyFolders($this->magentoMediaPath);
 
         //delete the empty folders
-        $depth = count($this->directoryHashMap);
+        $depth = !empty($this->directoryHashMap) ? max(array_keys($this->directoryHashMap)) : 0;
         for ($level = $depth; $level >= 0; $level --) {
             if (empty($this->directoryHashMap[$level]) == false) {
                 foreach ($this->directoryHashMap[$level] as $directory => $fileCount) {
@@ -216,7 +242,7 @@ class Media extends AbstractFiles implements HandlerInterface
     {
         $this->log('checking database');
 
-        /* @var $resource Mage_Core_Model_Resource */
+        /* @var ResourceConnection $resource */
         $resource   = $this->resourceConnection;
         $connection = $resource->getConnection('core_read');
 
@@ -225,7 +251,7 @@ class Media extends AbstractFiles implements HandlerInterface
 
         foreach ($this->fileList as $file) {
             $query  = "SELECT value FROM " . $tblCatalogProductEntityMediaGallery . " WHERE value = '"
-                . str_replace($this->magentoMediaPath, '', $file) . "' LIMIT 1";
+                . $this->sanitizeFilePathForDbLookup($file) . "' LIMIT 1";
 
             $result = $connection->fetchOne($query);
 
@@ -259,14 +285,11 @@ class Media extends AbstractFiles implements HandlerInterface
 
         if (empty($directories) == false) {
             foreach ($directories as $directory) {
-                //ignore cache and placeholder
-                if ($directory != $this->cachePath && $directory != $this->placeholderPath && $directory != $this->watermarkPath) {
+                //ignore placeholder and watermark
+                if ($directory != $this->placeholderPath && $directory != $this->watermarkPath) {
                     $this->getFilesRecursive($directory);
                 } else {
                     switch ($directory) {
-                        case $this->cachePath:
-                            $this->log('skipping cache path');
-                            break;
                         case $this->placeholderPath:
                             $this->log('skipping placeholder path');
                             break;
@@ -313,6 +336,7 @@ class Media extends AbstractFiles implements HandlerInterface
                         copy($file, $newFilePath);
 
                         //delete the original file
+                        $this->calculateSavings($file);
                         $this->log('deleting: ' . $file);
                         unlink($file);
                     } catch (Exception $e) {
@@ -327,5 +351,25 @@ class Media extends AbstractFiles implements HandlerInterface
         }
 
         $this->log('deleted ' . $deleteCounter . ' obsolete media files');
+    }
+
+    /**
+     * @param $file
+     * @return array|string|string[]
+     */
+    protected function sanitizeFilePathForDbLookup($file)
+    {
+        $file = str_replace($this->magentoMediaPath, '', $file);
+
+        if (substr($file, 0, 6) === '/cache') {
+            $fileParts = explode('/', $file);
+            array_shift($fileParts);
+            array_shift($fileParts);
+            array_shift($fileParts);
+
+            $file = '/' . implode('/', $fileParts);
+        }
+
+        return $file;
     }
 }
