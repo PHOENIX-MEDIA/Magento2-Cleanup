@@ -28,7 +28,6 @@
                     <depends>
                         <field id="is_enabled">1</field>
                     </depends>
-                    <backend_model>Phoenix\Cleanup\Model\Cron\Config</backend_model>
                 </field>
                 <field id="database_ping_time" translate="label comment" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Database Ping Frequency</label>
