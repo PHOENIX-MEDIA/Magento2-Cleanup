@@ -22,6 +22,7 @@ use Phoenix\Cleanup\Api\HandlerInterface;
 use Phoenix\Cleanup\Helper\Data as Helper;
 use Phoenix\Cleanup\Logger\Logger;
 use Phoenix\Cleanup\Model\Config;
+use Zend_Db_Select;
 
 class Media extends AbstractFiles implements HandlerInterface
 {
@@ -248,17 +249,24 @@ class Media extends AbstractFiles implements HandlerInterface
 
         $tblCatalogProductEntityMediaGallery = $this->resourceConnection
             ->getTableName('catalog_product_entity_media_gallery');
+        $query = $connection->select()
+            ->from($tblCatalogProductEntityMediaGallery)
+            ->reset(Zend_Db_Select::COLUMNS)
+            ->columns(['value'])
+            ->group('value');
+        $result = $connection->fetchAll($query);
 
-        foreach ($this->fileList as $file) {
-            $query  = "SELECT value FROM " . $tblCatalogProductEntityMediaGallery . " WHERE value = '"
-                . $this->sanitizeFilePathForDbLookup($file) . "' LIMIT 1";
-
-            $result = $connection->fetchOne($query);
-
-            if (empty($result) == true) {
-                $this->deleteList[] = $file;
-            }
+        $dbValues = [];
+        foreach ($result as $row) {
+            $dbValues[] = $row['value'];
         }
+
+        $this->deleteList = array_flip(
+            array_diff(
+                $this->fileList,
+                $dbValues
+            )
+        );
 
         $this->log('done');
     }
@@ -276,9 +284,9 @@ class Media extends AbstractFiles implements HandlerInterface
 
         if (empty($files) == false) {
             foreach ($files as $file) {
-                //check if it i not a directory, as directories may contain a . as well
-                if (is_dir($file) == false) {
-                    $this->fileList[] = $file;
+                // Check if current entry is not a directory, as directories may contain a . as well
+                if (!is_dir($file)) {
+                    $this->fileList[$file] = $this->sanitizeFilePathForDbLookup($file);
                 }
             }
         }
