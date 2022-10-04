@@ -110,7 +110,7 @@ class Media extends AbstractFiles implements HandlerInterface
      *
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->config->getCleanupMedia();
     }
