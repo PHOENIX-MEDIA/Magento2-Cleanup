@@ -125,6 +125,7 @@ class Media extends AbstractFiles implements HandlerInterface
         $this->init();
         $this->io->mkdir($this->mediaRecycleBinPath);
 
+        $this->log('start collecting files from ' . $this->magentoMediaPath);
         $this->getFilesRecursive($this->magentoMediaPath);
 
         $this->log('detected ' . count($this->fileList) . ' files in media folder');
