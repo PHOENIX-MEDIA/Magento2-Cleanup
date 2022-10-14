@@ -32,6 +32,14 @@ class Folders extends AbstractFieldArray
         );
 
         $this->addColumn(
+            'skip_days',
+            [
+                'label' => __('Skip Days'),
+                'style' => 'width:80px'
+            ]
+        );
+
+        $this->addColumn(
             'days',
             [
                 'label' => __('Cleanup Days'),

@@ -14,6 +14,7 @@
 
 namespace Phoenix\Cleanup\Model\Handler;
 
+use DateTime;
 use Exception;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ResourceConnection;
@@ -98,9 +99,10 @@ class Media extends AbstractFiles implements HandlerInterface
         Filesystem $filesystem,
         DirectoryList $directoryList,
         Archive $archive,
-        File $io
+        File $io,
+        DateTime $dateTime
     ) {
-        parent::__construct($config, $logger, $helper, $filesystem, $directoryList, $archive, $io);
+        parent::__construct($config, $logger, $helper, $filesystem, $directoryList, $archive, $io, $dateTime);
 
         $this->resourceConnection = $resourceConnection;
     }

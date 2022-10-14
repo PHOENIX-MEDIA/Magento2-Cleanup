@@ -65,8 +65,9 @@ class FilesFolders extends AbstractFiles implements HandlerInterface
                 }
                 $currentArchive .= DIRECTORY_SEPARATOR;
 
+                $skipDays = array_key_exists('skip_days', $folder) ? (int)$folder['skip_days'] : 0;
                 //check if there are any files
-                $files = $this->getFileList($pathToCleanup, $folder['mask']);
+                $files = $this->getFileList($pathToCleanup, $folder['mask'], $skipDays);
                 $this->log('cleaning up ' . count($files) . ' files in optional path: ' . $folder['path']);
 
                 foreach ($files as $file) {
