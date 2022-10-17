@@ -81,7 +81,9 @@
                 </field>
                 <field id="cleanup_optional_folders" translate="label comment" sortOrder="200" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Optional Folders</label>
-                    <comment>Add additional folders to the cleanup process. Path is relative within magento base directory</comment>
+                    <comment>
+                        <![CDATA[Add additional folders to the cleanup process. Path is relative within magento base directory.<br/>"Skip Days" defines how many days shouldn't be archived yet.<br/>"Cleanup Days" defines the number of days which the files are stored in archive before final cleanup.]]>
+                    </comment>
                     <frontend_model>Phoenix\Cleanup\Block\Adminhtml\System\Config\Fieldset\Folders</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                     <depends>

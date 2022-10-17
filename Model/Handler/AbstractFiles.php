@@ -13,6 +13,8 @@
  */
 namespace Phoenix\Cleanup\Model\Handler;
 
+use DateInterval;
+use DateTime;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Archive;
 use Magento\Framework\Filesystem;
@@ -86,6 +88,11 @@ abstract class AbstractFiles extends AbstractHandler
      */
     protected $io;
 
+    /**
+     * @var DateTime
+     */
+    protected $dateTime;
+
 
     /**
      * Files constructor.
@@ -96,6 +103,7 @@ abstract class AbstractFiles extends AbstractHandler
      * @param DirectoryList $directoryList
      * @param Archive $archive
      * @param File $io
+     * @param DateTime $dateTime
      */
     public function __construct(
         Config $config,
@@ -104,7 +112,8 @@ abstract class AbstractFiles extends AbstractHandler
         Filesystem $filesystem,
         DirectoryList $directoryList,
         Archive $archive,
-        File $io
+        File $io,
+        DateTime $dateTime
     ) {
         parent::__construct($config, $logger);
         $this->helper = $helper;
@@ -112,6 +121,7 @@ abstract class AbstractFiles extends AbstractHandler
         $this->directoryList = $directoryList;
         $this->archive = $archive;
         $this->io = $io;
+        $this->dateTime = $dateTime;
     }
 
     /**
@@ -170,7 +180,7 @@ abstract class AbstractFiles extends AbstractHandler
     {
         $this->log('cleaning up archive: ' . $archivePath);
 
-        if (empty($cleanupDays)) {
+        if ($cleanupDays === null) {
             $logFileDays = $this->config->getKeepLogFileDays();
         } else {
             $logFileDays = $cleanupDays;
@@ -201,10 +211,11 @@ abstract class AbstractFiles extends AbstractHandler
      *
      * @param string $path
      * @param string $mask
+     * @param int $skipDays
      *
      * @return array
      */
-    protected function getFileList($path, $mask = '*')
+    protected function getFileList($path, $mask = '*', $skipDays = 0)
     {
         $this->logger->debug('checking files in folder: ' . $path);
 
@@ -219,11 +230,14 @@ abstract class AbstractFiles extends AbstractHandler
         $files = glob($path . '/' . $fileMask);
 
         $fileList = [];
+        $skipDaysTs = $this->dateTime->sub(new DateInterval('P' . $skipDays . 'D'))->getTimestamp();
         foreach ($files as $file) {
-            if (is_dir($file) == false) {
+            if (is_dir($file) == false &&
+                filemtime($file) < $skipDaysTs
+            ) {
                 $fileList[] = $file;
             } else {
-                $this->logger->debug('skipping folder: ' . $file);
+                $this->logger->debug('skipping file/folder: ' . $file);
             }
         }
 
